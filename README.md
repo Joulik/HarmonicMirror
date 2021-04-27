@@ -1,4 +1,4 @@
 # HarmonicMirror
 
 
-![anim](../Joulik.github.io/images/fun_python.gif) 
+![anim](https://github.com/Joulik/Joulik.github.io/blob/master/images/fun_python.gif) 
