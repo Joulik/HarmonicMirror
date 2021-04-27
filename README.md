@@ -11,7 +11,6 @@ Construction of the image captured by webcam starting from a random spatial dist
 ```
 # Start the script in python
 python harmonic-mirror.py
-
 ```
 
 Pay attention there are three important parameters that the user may want to change by editing the script.
