@@ -7,6 +7,11 @@ import time
 
 def main():
 
+    # user defined parameters
+    max_number_captures = 5
+    produce_gif = False
+    reservoir_factor = 20
+
     # edge detection parameters
     edge_threshold1 = 500
     edge_threshold2 = 1000
@@ -35,7 +40,7 @@ def main():
     print("ymax / pixel ", ymax_px)
 
     # particles reservoir size
-    dim_part = int(xmax * ymax/30)
+    dim_part = int(xmax * ymax / reservoir_factor)
     print("max number of particles ", dim_part)
         
     # random distribution of particles
@@ -47,10 +52,12 @@ def main():
     # initialize test energy counts and list of image files
     en_test = 0.
     count_loop = 0
-    count_img = 0
-    filenames = []
+    
+    if produce_gif:
+        count_img = 0
+        filenames = []
 
-    while(count_loop < 4):
+    while(count_loop <= max_number_captures):
         
         # initialize forces
         force_x = np.zeros(dim_part, dtype=float, order='C')
@@ -67,12 +74,12 @@ def main():
             dim_anchpts = x_anchpts.shape[0]
             print("number of anchor points and active particles ", dim_anchpts)
             count_loop += 1
-            print("Loop {}".format(count_loop))
+            print("Capture {}".format(count_loop))
 
         # loop over particles
-
-        #energy
+        # initialize energy
         en = 0.
+
         for i in range(0,dim_anchpts):
 
             # update positions
@@ -120,10 +127,11 @@ def main():
         vis[y_part.astype(int), x_part.astype(int)] = 1 
         cv2.imshow('Gotcha!', vis)
 
-        # store image
-        count_img += 1
-        cv2.imwrite('images/test_{}.jpg'.format(count_img),vis*255,[cv2.IMWRITE_JPEG_QUALITY, 50])
-        filenames.append('images/test_{}.jpg'.format(count_img))
+        if produce_gif:
+            # store image
+            count_img += 1
+            cv2.imwrite('images/test_{}.jpg'.format(count_img),vis*255,[cv2.IMWRITE_JPEG_QUALITY, 50])
+            filenames.append('images/test_{}.jpg'.format(count_img))
         
         cv2.waitKey(1)
 
@@ -134,11 +142,12 @@ def main():
     capture_stream.release()
     cv2.destroyAllWindows()
 
-    # assemble images in animated gif
-    with imageio.get_writer('images/movie.gif', mode='I') as writer:
-        for filename in filenames:
-            image = imageio.imread(filename)
-            writer.append_data(image)
+    if produce_gif:
+        # assemble images in animated gif
+        with imageio.get_writer('images/movie.gif', mode='I') as writer:
+            for filename in filenames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
 
 
 def find_edges(capture_stream, edge_threshold1, edge_threshold2):
